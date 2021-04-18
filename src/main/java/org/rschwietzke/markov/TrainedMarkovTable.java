@@ -32,7 +32,7 @@ public class TrainedMarkovTable<T, S>
     public final Map<T, Row<T, S>> quickRows = new HashMap<>();
     
     // the total sum of all rows for later random weighted access
-    public long sum = 0;
+    public long rowMax = 0;
     
     public TrainedMarkovTable(final MarkovTable<T, S> src)
     {
@@ -59,11 +59,11 @@ public class TrainedMarkovTable<T, S>
         long total = 0;
         for (var row : this.rows)
         {
-            row.sum += total;
-            total = row.sum;
+            row.aggregatedSum += total;
+            total = row.aggregatedSum;
             
             // keep always the last one
-            sum = total;
+            rowMax = total;
         }
     }
 
@@ -74,12 +74,12 @@ public class TrainedMarkovTable<T, S>
     {
         // ok, we need the sum to know the max
         // we always start with 1 because an entry has at least 1 as sum!
-        var value = r.nextLong(sum + 1);
+        var value = r.nextLong(rowMax + 1);
         
         for (int i = 0; i < rows.size(); i++)
         {
             var row = rows.get(i);
-            if (value <= row.sum)
+            if (value <= row.aggregatedSum)
             {
                 return row.t;
             }
@@ -94,15 +94,15 @@ public class TrainedMarkovTable<T, S>
      */
     public Optional<S> randomCol(final FastRandom r, final T t)
     {
-        var cols = quickRows.get(t);
-        if (cols != null)
+        var row = quickRows.get(t);
+        if (row != null)
         {
-            var value = r.nextLong(cols.sum + 1);
+            var value = r.nextLong(row.colMax + 1);
             
-            for (int i = 0; i < cols.cols.size(); i++)
+            for (int i = 0; i < row.cols.size(); i++)
             {
-                var col = cols.cols.get(i);
-                if (value <= col.sum)
+                var col = row.cols.get(i);
+                if (value <= col.aggregatedSum)
                 {
                     return Optional.of(col.s);
                 }
@@ -117,12 +117,15 @@ public class TrainedMarkovTable<T, S>
         public final List<Col<S>> cols = new ArrayList<>();
         
         // the total sum of all cols for later random weighted access
-        public long sum;
+        public long aggregatedSum;
+        public long count;
+        public long colMax;
         
         public Row(final MarkovTable.Columns<T, S> row)
         {
             this.t = row.type;
-            this.sum = row.count; // to be adjusted later
+            this.aggregatedSum = row.count;
+            this.count = row.count;
             
             row.columns.forEach((k, v) -> 
             {
@@ -135,70 +138,72 @@ public class TrainedMarkovTable<T, S>
             long total = 0;
             for (var col : cols)
             {
-                col.sum += total;
-                total = col.sum;
+                col.aggregatedSum += total;
+                total = col.aggregatedSum;
                 
                 // keep always the last one
-                sum = total;
+                colMax = total;
             }
         }
         
         @Override
         public int compareTo(final Row<T, S> o)
         {
-            if (o.sum == sum)
+            if (o.count == count)
             {
                 return 0;
             }
-            else if (sum < o.sum)
+            else if (count < o.count)
             {
-                return 1;
+                return -1;
             }
             else
             {
-                return -1;
+                return 1;
             }
         }
 
         @Override
         public String toString()
         {
-            return "Row [t=" + t + ", sum=" + sum + "]";
+            return "Row [t=" + t + ", count=" + count + ", sum=" + aggregatedSum + "]";
         }
     }
 
     public static class Col<S> implements Comparable<Col<S>>
     {
-        public S s;
-        public long sum;
+        public final S s;
+        public long aggregatedSum;
+        public final long count;
         
         public Col(final S type, final long count)
         {
             this.s = type;
-            this.sum = count;
+            this.count = count;
+            this.aggregatedSum = count;
         }
         
         @Override
         public int compareTo(final Col<S> o)
         {
-            if (o.sum == sum)
+            if (o.count == count)
             {
                 return 0;
             }
-            else if (sum < o.sum)
+            else if (count < o.count)
             {
-                return 1;
+                return -1;
             }
             else
             {
-                return -1;
+                return 1;
             }
         }
 
         @Override
         public String toString()
         {
-            return "Col [s=" + s + ", sum=" + sum + "]";
+            return "Col [s=" + s + ", count=" + count + ", sum=" + aggregatedSum + "]";
         }
     }
 }

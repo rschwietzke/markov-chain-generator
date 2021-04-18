@@ -1,0 +1,130 @@
+Adidas
+Allianz
+BASF
+Bayer
+Beiersdorf
+BMW
+Continental
+Covestro
+Daimler
+Deutsche Bank
+Deutsche Börse
+Deutsche Post
+Deutsche Telekom
+Deutsche Wohnen
+EON
+Fresenius
+Fresenius Medical Care
+HeidelbergCement
+Henkel
+Infineon Technologies
+Linde
+Merck
+MTU Aero Engines
+Münchener Rück
+RWE
+SAP
+Siemens
+Volkswagen
+Vonovia
+Wirecard
+Drillisch
+Aixtron
+Bechtle
+Cancom
+Carl Zeiss Meditec
+CompuGroup Medical
+Deutsche Telekom
+Drägerwerk 
+Eckert & Ziegler Strahlen- und Medizintechnik
+Evotec
+Freenet
+Infineon Technologies
+Jenoptik
+MorphoSys
+Nemetschek
+New Work
+Nordex
+Pfeiffer Vacuum Technology
+Qiagen
+S&T
+SAP
+Sartorius
+Siemens Healthineers
+Siltronic
+Software
+TeamViewer
+Telefónica Deutschland Holding
+United Internet
+Varta
+Wirecard
+Name
+Drillisch
+ADO Properties
+ADVA Optical Networking
+Aixtron
+Amadeus FiRe
+Atoss Software
+BayWa
+Befesa
+Bertrandt
+Bilfinger
+Borussia Dortmund 
+Ceconomy
+Cewe Stiftung 
+Corestate Capital Holding
+Dermapharm
+Deutsche Beteiligung
+Deutsche EuroShop
+Deutsche Pfandbriefbank
+Deutz
+DIC Asset
+DMG Mori Aktiengesellschaft
+Dr. Hönle
+Drägerwerk
+DWS Group 
+Eckert & Ziegler Strahlen- und Medizintechnik
+Encavis
+Fielmann
+Hamborner Reit
+Hamburger Hafen und Logistik
+Hornbach Holding
+HYPOPORT
+Indus Holding
+Instone Real Estate
+Jenoptik
+Jost Werke
+Jungheinrich
+Klöckner
+Koenig & Bauer
+Krones
+KWS SAAT 
+Leoni
+LPKF Laser & Electronics
+New Work
+Nordex
+Norma Group
+Patrizia
+Pfeiffer Vacuum
+SAF-Holland
+Salzgitter
+Schaeffler-Gruppe
+Shop Apotheke Europe
+Sixt
+SMA Solar Technology
+SNP Schneider Neureither
+Stabilus
+Steinhoff International Holdings
+STRATEC
+Südzucker
+Takkt
+Talanx
+Tele Columbus
+Traton
+Vossloh
+Wacker Chemie
+Wacker Neuson
+WashTec
+Wüstenrot & Württembergische
+Zeal Network
+Zooplus

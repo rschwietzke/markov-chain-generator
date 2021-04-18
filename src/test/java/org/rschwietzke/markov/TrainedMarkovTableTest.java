@@ -11,10 +11,10 @@ import it.unimi.dsi.util.FastRandom;
 class TrainedMarkovTableTest
 {
     @Test
-    void _2x2_2entries()
+    void _2x1_2entries()
     {
         var mt = new MarkovTable<Character, Character>();
-        var mtr = mt.train('A', 'a').train('B', 'b').finish();
+        var mtr = mt.train('A', 'a').train('B', 'b');
         
         var tt = new TrainedMarkovTable<>(mtr);
         verifyTable(tt, 2, 2L);
@@ -27,12 +27,28 @@ class TrainedMarkovTableTest
     }
 
     @Test
-    void _2x2_4entries()
+    void _2x1_3entries()
+    {
+        var mt = new MarkovTable<Character, Character>();
+        var mtr = mt.train('A', 'a').train('B', 'b').train('B', 'b');
+        
+        var tt = new TrainedMarkovTable<>(mtr);
+        verifyTable(tt, 2, 3L);
+        
+        verifyRow(tt, 0, 'A', 1, 1L);
+        verifyCol(tt, 0, 0, 'a', 1L);
+        
+        verifyRow(tt, 1, 'B', 1, 3L);
+        verifyCol(tt, 1, 0, 'b', 2L);
+    }
+    
+    @Test
+    void _2x4_4entries()
     {
         var mt = new MarkovTable<Character, Character>();
         mt.train('A', 'a').train('B', 'b');
         mt.train('A', 'c').train('B', 'c');
-        var tt = new TrainedMarkovTable<>(mt.finish());
+        var tt = new TrainedMarkovTable<>(mt);
 
         verifyTable(tt, 2, 4L);
 
@@ -46,12 +62,58 @@ class TrainedMarkovTableTest
     }
 
     @Test
+    void _2x2_more()
+    {
+        var mt = new MarkovTable<Character, Character>();
+        mt.train('A', 'a').train('A', 'b').train('A', 'a').train('A', 'b');
+        mt.train('B', 'a').train('B', 'b').train('B', 'a').train('B', 'b');
+
+        var tt = new TrainedMarkovTable<>(mt.finish());
+
+        verifyTable(tt, 2, 8L);
+
+        verifyRow(tt, 0, 'A', 2, 4L);
+        verifyCol(tt, 0, 0, 'a', 2L);
+        verifyCol(tt, 0, 1, 'b', 4L);
+
+        verifyRow(tt, 1, 'B', 2, 8L);
+        verifyCol(tt, 1, 0, 'a', 2L);
+        verifyCol(tt, 1, 1, 'b', 4L);
+    }
+    
+    @Test
     void _4x1_entries()
     {
         var mt = new MarkovTable<String, String>().train("A", "a").train("B", "a").train("C", "a").train("D", "a");
         var tt = new TrainedMarkovTable<>(mt);
         
         verifyTable(tt, 4, 4L);
+
+        verifyRow(tt, 0, "A", 1, 1L);
+        verifyCol(tt, 0, 0, "a", 1L);
+
+        verifyRow(tt, 1, "B", 1, 2L);
+        verifyCol(tt, 1, 0, "a", 1L);
+
+        verifyRow(tt, 2, "C", 1, 3L);
+        verifyCol(tt, 2, 0, "a", 1L);
+
+        verifyRow(tt, 3, "D", 1, 4L);
+        verifyCol(tt, 3, 0, "a", 1L);
+    }
+    
+    @Test
+    void _8x4_entries()
+    {
+        var mt = new MarkovTable<String, String>();
+        mt.train("A", "a").train("B", "a").train("C", "a").train("D", "a");
+        mt.train("a", "a").train("b", "a").train("c", "a").train("d", "a");
+        mt.train("a", "b").train("b", "c").train("c", "d").train("d", "d");
+        mt.train("A", "a").train("B", "a").train("C", "a").train("D", "a");
+
+        var tt = new TrainedMarkovTable<>(mt);
+        
+        verifyTable(tt, 8, 16L);
 
         verifyRow(tt, 0, "A", 1, 1L);
         verifyCol(tt, 0, 0, "a", 1L);
@@ -130,28 +192,28 @@ class TrainedMarkovTableTest
         
         assertEquals("A", tt.randomRow(LongFastRandom.get(1)));
         
-        assertEquals("d", tt.randomCol(LongFastRandom.get(1), "A").get());
-        assertEquals("d", tt.randomCol(LongFastRandom.get(2), "A").get());
-        assertEquals("d", tt.randomCol(LongFastRandom.get(3), "A").get());
-        assertEquals("b", tt.randomCol(LongFastRandom.get(4), "A").get());
-        assertEquals("b", tt.randomCol(LongFastRandom.get(5), "A").get());
-        assertEquals("e", tt.randomCol(LongFastRandom.get(6), "A").get());
+        assertEquals("e", tt.randomCol(LongFastRandom.get(1), "A").get());
+        assertEquals("b", tt.randomCol(LongFastRandom.get(2), "A").get());
+        assertEquals("b", tt.randomCol(LongFastRandom.get(3), "A").get());
+        assertEquals("d", tt.randomCol(LongFastRandom.get(4), "A").get());
+        assertEquals("d", tt.randomCol(LongFastRandom.get(5), "A").get());
+        assertEquals("d", tt.randomCol(LongFastRandom.get(6), "A").get());
     }
     
     /*
      * Helper methods for testing
      */
-    private static <T, S> void verifyTable(TrainedMarkovTable<T, S> table, int rowCount, long rowSum)
+    private static <T, S> void verifyTable(TrainedMarkovTable<T, S> table, int rowCount, long max)
     {
         assertEquals(rowCount, table.rows.size());
-        assertEquals(rowSum, table.sum);    
+        assertEquals(max, table.rowMax);    
     }
 
-    private static <T, S> void verifyRow(TrainedMarkovTable<T, S> table, int row, T t, int colCount, long sum)
+    private static <T, S> void verifyRow(TrainedMarkovTable<T, S> table, int row, T t, int colCount, long max)
     {
         var r = table.rows.get(row);
         assertEquals(t, r.t);
-        assertEquals(sum, r.sum);
+        assertEquals(max, r.colMax);
         assertEquals(colCount, r.cols.size());    
     }
     
@@ -160,6 +222,6 @@ class TrainedMarkovTableTest
         var r = table.rows.get(row);
         var c = r.cols.get(col);
         assertEquals(s, c.s);
-        assertEquals(sum, c.sum);
+        assertEquals(sum, c.colSum);
     }
 }
